@@ -1,19 +1,19 @@
-<?php 
+<?php
 
 namespace Origami\Money\Entities;
 
 use Money\Currency;
 use Money\Money;
 
-trait HasMoney {
-
+trait HasMoney
+{
     public function asMoney($amount)
     {
-        if ( $amount instanceof Money ) {
+        if ($amount instanceof Money) {
             return $amount;
         }
 
-        if ( is_null($amount) ) {
+        if (is_null($amount)) {
             return null;
         }
 
@@ -22,7 +22,7 @@ trait HasMoney {
 
     protected function asMoneyInput($amount)
     {
-        if ( is_null($amount) ) {
+        if (is_null($amount)) {
             return null;
         }
 
@@ -31,11 +31,11 @@ trait HasMoney {
 
     protected function castAttributeAsMoney($value)
     {
-        if ( $value instanceof Money ) {
+        if ($value instanceof Money) {
             return $value->getAmount();
         }
 
-        if ( is_null($value) ) {
+        if (is_null($value)) {
             return null;
         }
 
@@ -52,5 +52,4 @@ trait HasMoney {
     {
         return new Currency($this->currency ?: config('money.default_currency'));
     }
-
 }
