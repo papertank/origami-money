@@ -51,6 +51,9 @@ class MoneyWithoutTrailingZeros implements MoneyFormatter
             $decimalDigits = substr($valueBase, $valueLength - $subunit);
 
             if (intval($decimalDigits) == 0) {
+                $this->formatter->setTextAttribute(\NumberFormatter::CURRENCY_CODE, $money->getCurrency()->getCode());
+                $this->formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, 0);
+                $this->formatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
                 $this->formatter->setPattern('¤#,##0.##');
             }
 
