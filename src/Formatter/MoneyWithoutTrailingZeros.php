@@ -2,11 +2,9 @@
 
 namespace Origami\Money\Formatter;
 
-use Money\Money;
 use Money\Currencies;
-use Money\MoneyFormatter;
 
-class MoneyWithoutTrailingZeros implements MoneyFormatter
+class MoneyWithoutTrailingZeros
 {
     /**
      * @var \NumberFormatter
@@ -19,8 +17,8 @@ class MoneyWithoutTrailingZeros implements MoneyFormatter
     private $currencies;
 
     /**
-     * @param \NumberFormatter $formatter
-     * @param Currencies       $currencies
+     * @param  \NumberFormatter  $formatter
+     * @param  Currencies  $currencies
      */
     public function __construct(\NumberFormatter $formatter, Currencies $currencies)
     {
@@ -28,10 +26,7 @@ class MoneyWithoutTrailingZeros implements MoneyFormatter
         $this->currencies = $currencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function format(Money $money)
+    public function format($money)
     {
         $valueBase = $money->getAmount();
         $negative = false;
@@ -51,21 +46,18 @@ class MoneyWithoutTrailingZeros implements MoneyFormatter
             $decimalDigits = substr($valueBase, $valueLength - $subunit);
 
             if (intval($decimalDigits) == 0) {
-                $this->formatter->setTextAttribute(\NumberFormatter::CURRENCY_CODE, $money->getCurrency()->getCode());
-                $this->formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, 0);
-                $this->formatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
                 $this->formatter->setPattern('¤#,##0.##');
             }
 
             if (strlen($decimalDigits) > 0) {
-                $formatted .= '.' . $decimalDigits;
+                $formatted .= '.'.$decimalDigits;
             }
         } else {
-            $formatted = '0.' . str_pad('', $subunit - $valueLength, '0') . $valueBase;
+            $formatted = '0.'.str_pad('', $subunit - $valueLength, '0').$valueBase;
         }
 
         if ($negative === true) {
-            $formatted = '-' . $formatted;
+            $formatted = '-'.$formatted;
         }
 
         return $this->formatter->formatCurrency($formatted, $money->getCurrency()->getCode());

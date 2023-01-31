@@ -2,23 +2,12 @@
 
 namespace Origami\Money;
 
-use NumberFormatter;
-use Money\Currencies\ISOCurrencies;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use Money\Formatter\IntlMoneyFormatter;
-use Money\Formatter\DecimalMoneyFormatter;
-use Origami\Money\Formatter\MoneyWithoutTrailingZeros;
+use Money\Currencies\ISOCurrencies;
 
 class MoneyServiceProvider extends ServiceProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
     /**
      * Register the service provider.
      *
@@ -31,39 +20,32 @@ class MoneyServiceProvider extends ServiceProvider
             'money'
         );
 
-        $this->app->singleton('origami.money.intlFormatter', function ($app) {
-            return new IntlMoneyFormatter(new NumberFormatter($this->app->getLocale(), NumberFormatter::CURRENCY), new ISOCurrencies);
+        $this->app->singleton(MoneyFormatter::class, function ($app) {
+            return new MoneyFormatter($app);
         });
-        
-        $this->app->singleton('origami.money.withoutTrailingZerosFormatter', function ($app) {
-            return new MoneyWithoutTrailingZeros(new NumberFormatter($this->app->getLocale(), NumberFormatter::CURRENCY), new ISOCurrencies);
-        });
+        $this->app->alias(MoneyFormatter::class, 'origami-money.formatter');
 
-        $this->app->singleton('origami.money.decimalFormatter', function ($app) {
-            return new DecimalMoneyFormatter(new ISOCurrencies);
+        $this->app->singleton(MoneyHelper::class, function ($app) {
+            return new MoneyHelper(new ISOCurrencies);
         });
+        $this->app->alias(MoneyHelper::class, 'origami-money.helper');
     }
 
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->publishConfig();
+            $this->publishes([
+                __DIR__.'/../config/money.php' => config_path('money.php'),
+            ], 'money-config');
         }
 
         Blade::directive('money', function ($expression) {
-            return "<?php echo $expression ? app('origami.money.intlFormatter')->format($expression) : ''; ?>";
+            return "<?php echo app('origami-money.formatter')->format($expression); ?>";
         });
 
         Blade::directive('moneyNeat', function ($expression) {
-            return "<?php echo $expression ? app('origami.money.withoutTrailingZerosFormatter')->format($expression) : ''; ?>";
+            return "<?php echo app('origami-money.formatter')->formatNeat($expression); ?>";
         });
-    }
-
-    protected function publishConfig()
-    {
-        $this->publishes([
-            __DIR__.'/../config/money.php' => config_path('money.php'),
-        ], 'money-config');
     }
 
     /**
@@ -73,6 +55,6 @@ class MoneyServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['origami.money.intlFormatter', 'origami.money.withoutTrailingZerosFormatter', 'origami.money.decimalFormatter'];
+        return ['origami-money.formatter', 'origami-money.helper'];
     }
 }

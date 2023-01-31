@@ -2,8 +2,7 @@
 
 namespace Origami\Money\Entities;
 
-use Money\Currency;
-use Money\Money;
+use Origami\Money\Money;
 
 trait HasMoney
 {
@@ -17,39 +16,31 @@ trait HasMoney
             return null;
         }
 
-        return new Money((int) $amount, $this->getCurrency());
+        return new Money(ceil($amount), $this->getCurrencyCode());
     }
 
-    protected function asMoneyInput($amount)
+    protected function zeroMoney()
     {
-        if (is_null($amount)) {
-            return null;
-        }
-
-        return app('origami.money.decimalFormatter')->format($this->asMoney($amount));
+        return new Money(0, $this->getCurrencyCode());
     }
 
-    protected function castAttributeAsMoney($value)
+    public function setCurrencyCode($currency)
     {
-        if ($value instanceof Money) {
-            return $value->getAmount();
-        }
+        $this->currency = $currency instanceof \Money\Currency ? $currency->getCode() : $currency;
 
-        if (is_null($value)) {
-            return null;
-        }
-
-        return $this->asMoney($value * 100)->getAmount();
-    }
-
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency instanceof Currency ? $currency->getName() : $currency;
         return $this;
     }
 
+    public function getCurrencyCode()
+    {
+        return $this->currency ?: config('money.default_currency');
+    }
+
+    /**
+     * @alias getCurrencyCode
+     */
     public function getCurrency()
     {
-        return new Currency($this->currency ?: config('money.default_currency'));
+        return $this->getCurrencyCode();
     }
 }
