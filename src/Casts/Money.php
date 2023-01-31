@@ -40,7 +40,7 @@ class Money implements CastsAttributes
      */
     public function set($model, $key, $value, $attributes)
     {
-        if ($value instanceof \Origami\Money\Money) {
+        if ($value instanceof \Origami\Money\Money || $value instanceof \Money\Money) {
             return (string) $value->getAmount();
         }
 
@@ -68,6 +68,10 @@ class Money implements CastsAttributes
     {
         if ($amount instanceof \Origami\Money\Money) {
             return $amount;
+        }
+
+        if ($amount instanceof \Money\Money) {
+            return \Origami\Money\Money::instance($amount);
         }
 
         if (is_null($amount)) {

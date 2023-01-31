@@ -45,6 +45,14 @@ class Money implements JsonSerializable, Castable
         return new static($amount, $currency);
     }
 
+    /**
+     * Create an Origami\Money instance from a Money\Money one.
+     *
+     * @param $money \Money\Money
+     * @return Money
+     *
+     * @throws MoneyException
+     */
     public static function instance($money)
     {
         if ($money instanceof static) {
