@@ -23,7 +23,7 @@ First, publish the default configuration.
 php artisan vendor:publish --tag="money-config"
 ```
 
-This will add a new configuration file to: `config/push.php` which contains a `default_currency` value.
+This will add a new configuration file to: `config/money.php` which contains a `default_currency` value.
 
 ## Usage
 
@@ -40,11 +40,11 @@ For example:
 
 ```php
 $money = new Origami\Money\Money(100, 'GBP') // £1
-$money = new Origami\Money\Money(500, 'USD') // $500
+$money = new Origami\Money\Money(50000, 'USD') // $500
 $money = Origami\Money\Money::make(1000000, 'USD') // $10,000
 ```
 
-You can also pass a moneyphp objects:
+You can also pass a moneyphp object:
 
 ```php
 $currency = new Money\Currency('GBP');
@@ -284,9 +284,15 @@ app('origami-money.formatter')->formatDecimal($money) // Outputs: 5.00
 
 You can use the following directives in your Blade views:
 
-`@money($money)` - same as `$money->format()`
+```php
+@money($money)
+// same as `$money->format()`
+```
 
-`@moneyNeat($money)` - same as `$money->formatNeat()`
+```php
+@moneyNeat($money)
+// same as `$money->formatNeat()`
+```
 
 ## Eloquent Attribute Cast
 
@@ -364,8 +370,8 @@ If your controllers or other methods already expect user input in cents rather t
  - v1.-* - Version 1 offered basic formatting and was compatible with Laravel 6-9.
 
 ## Author
-[David Rushton](https://github.com/davidrushton)
-[Papertank Limited](http://papertank.com)
+- [David Rushton](https://github.com/davidrushton)
+- [Papertank Limited](http://papertank.com)
 
 ## License
 [View the license](http://github.com/papertank/origami-money/blob/master/LICENSE)
