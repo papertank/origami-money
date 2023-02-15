@@ -1,4 +1,4 @@
-# Origami Push - Laravel Push Notifications
+# Origami Money for Laravel
 
 This package is a money helper for Laravel projects and a wrapper around [moneyphp/money](https://github.com/moneyphp/money).
 
